@@ -1,1 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Загрузка товара — LookAI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 40px;
+    }
+
+    .box {
+      background: white;
+      padding: 24px;
+      max-width: 500px;
+      margin: auto;
+      border-radius: 12px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Загрузка товара</h2>
+
+  <input type="text" id="name" placeholder="Название товара">
+  
+  <select id="category">
+    <option value="Платье">Платье</option>
+    <option value="Футболка">Футболка</option>
+    <option value="Куртка">Куртка</option>
+  </select>
+
+  <input type="file" id="image">
+
+  <button onclick="saveProduct()">Сохранить товар</button>
+</div>
+
+<script>
+function saveProduct() {
+  const name = document.getElementById('name').value;
+  const category = document.getElementById('category').value;
+  const imageInput = document.getElementById('image');
+
+  if (!name || !imageInput.files[0]) {
+    alert('Заполните все поля');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function() {
+    const product = {
+      name,
+      category,
+      image: reader.result
+    };
+
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    products.push(product);
+    localStorage.setItem('products', JSON.stringify(products));
+
+    alert('Товар сохранён');
+  };
+
+  reader.readAsDataURL(imageInput.files[0]);
+}
+</script>
+
+</body>
+</html>
 
