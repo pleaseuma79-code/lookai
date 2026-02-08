@@ -21,7 +21,17 @@ app.get('/ping', async (req, res) => {
     res.json({ status: 'ok', time: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }app.get('/products', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, title, image_url, category FROM shop_products ORDER BY created_at DESC'
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
+});
+
 });// Добавить товар
 app.post('/products', async (req, res) => {
   const { shop_id, title, image_url, category } = req.body;
