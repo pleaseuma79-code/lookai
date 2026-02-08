@@ -15,47 +15,17 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+// === PING ===
 app.get('/ping', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
     res.json({ status: 'ok', time: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
-  }app.get('/products', async (req, res) => {
-  try {
-    const result = await pool.query(
-      'SELECT id, title, image_url, category FROM shop_products ORDER BY created_at DESC'
-    );
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
   }
 });
 
-});// Добавить товар
-app.post('/products', async (req, res) => {
-  const { shop_id, title, image_url, category } = req.body;
-
-  if (!shop_id || !title || !image_url) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
-
-  try {
-    const result = await pool.query(
-      `INSERT INTO products (shop_id, title, image_url, category)
-       VALUES ($1, $2, $3, $4)
-       RETURNING *`,
-      [shop_id, title, image_url, category || null]
-    );
-
-    res.json({ status: 'ok', product: result.rows[0] });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// Получить товары магазина
+// === GET PRODUCTS (by shop_id) ===
 app.get('/products', async (req, res) => {
   const { shop_id } = req.query;
 
@@ -65,18 +35,40 @@ app.get('/products', async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT * FROM products
+      `SELECT id, title, image_url, category
+       FROM shop_products
        WHERE shop_id = $1
        ORDER BY created_at DESC`,
       [shop_id]
     );
 
-    res.json({ status: 'ok', products: result.rows });
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+// === ADD PRODUCT ===
+app.post('/products', async (req, res) => {
+  const { shop_id, title, image_url, category } = req.body;
+
+  if (!shop_id || !title || !image_url) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO shop_products (shop_id, title, image_url, category)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [shop_id, title, image_url, category || null]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
