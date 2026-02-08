@@ -62,20 +62,24 @@
 <body>
   <div class="container">
 
-    <h1>Виртуальная примерка</h1>
-<div class="box">
+   <div class="box">
   <h3>Выберите способ примерки</h3>
+
   <label>
-    <input type="radio" name="mode" checked>
+    <input type="radio" name="mode" checked onclick="showPhoto()">
     Примерить по фото
   </label><br><br>
+
   <label>
-    <input type="radio" name="mode">
+    <input type="radio" name="mode" onclick="showAvatar()">
     Примерить без фото
   </label>
 </div>
 
-    <div class="box">
+
+    <div class="box" id="photoMode">
+  <h3>1. Загрузите фото</h3>
+
       <h3>1. Загрузите фото</h3>
       <input type="file">
     </div>
@@ -90,7 +94,7 @@
       </select>
     </div>
 <!-- РЕЖИМ БЕЗ ФОТО -->
-<div class="box">
+<div class="box" id="avatarMode" style="display:none;">
   <h3>Примерка без фото</h3>
   <select>
     <option>Рост</option>
@@ -106,9 +110,10 @@
   </select>
 </div>
 
-    <button>Примерить</button>
+    <button onclick="runTryOn()">Примерить</button>
 
-    <div class="result">
+
+    <div class="result" id="resultBox" style="display:none;">
       <h3>Результат</h3>
       <div class="placeholder">
         Здесь будет результат примерки
@@ -116,5 +121,20 @@
     </div>
 
   </div>
+<script>
+  function showPhoto() {
+    document.getElementById('photoMode').style.display = 'block';
+    document.getElementById('avatarMode').style.display = 'none';
+  }
+
+  function showAvatar() {
+    document.getElementById('photoMode').style.display = 'none';
+    document.getElementById('avatarMode').style.display = 'block';
+  }
+
+  function runTryOn() {
+    document.getElementById('resultBox').style.display = 'block';
+  }
+</script>
 </body>
 </html>
