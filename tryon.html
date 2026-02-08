@@ -63,13 +63,25 @@
   <div class="container">
 
     <h1>Виртуальная примерка</h1>
+<div class="box">
+  <h3>Выберите способ примерки</h3>
+  <label>
+    <input type="radio" name="mode" checked>
+    Примерить по фото
+  </label><br><br>
+  <label>
+    <input type="radio" name="mode">
+    Примерить без фото
+  </label>
+</div>
 
     <div class="box">
       <h3>1. Загрузите фото</h3>
       <input type="file">
     </div>
 
-    <div class="box">
+   <!-- РЕЖИМ ПО ФОТО -->
+ <div class="box">
       <h3>2. Выберите товар</h3>
       <select>
         <option>Футболка</option>
@@ -77,6 +89,22 @@
         <option>Куртка</option>
       </select>
     </div>
+<!-- РЕЖИМ БЕЗ ФОТО -->
+<div class="box">
+  <h3>Примерка без фото</h3>
+  <select>
+    <option>Рост</option>
+    <option>150–160 см</option>
+    <option>160–170 см</option>
+    <option>170–180 см</option>
+  </select>
+  <select>
+    <option>Комплекция</option>
+    <option>Стройная</option>
+    <option>Средняя</option>
+    <option>Плотная</option>
+  </select>
+</div>
 
     <button>Примерить</button>
 
