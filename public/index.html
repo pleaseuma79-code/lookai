@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>LookAI — виртуальная примерка</title>
+  <title>LookAI — виртуальная примерка одежды</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -12,143 +12,157 @@
 
     body {
       margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      background: #ffffff;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Arial, sans-serif;
       color: #111;
+      background: #ffffff;
     }
 
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 24px 60px;
+      padding: 24px 64px;
     }
 
-    header .logo {
-      font-weight: 700;
+    .logo {
       font-size: 22px;
+      font-weight: 700;
     }
 
-    header nav {
+    nav {
       display: flex;
-      gap: 32px;
       align-items: center;
+      gap: 28px;
     }
 
-    header nav a {
+    nav a {
       text-decoration: none;
       color: #111;
       font-size: 15px;
     }
 
-    header .btn {
+    .btn-primary {
       background: #111;
       color: #fff;
-      padding: 10px 18px;
+      border: none;
       border-radius: 999px;
-      text-decoration: none;
+      padding: 12px 22px;
       font-size: 14px;
+      cursor: pointer;
     }
 
     .hero {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 80px 60px;
+      padding: 60px 64px 0;
       display: grid;
       grid-template-columns: 1fr 1fr;
       align-items: center;
-      position: relative;
+      gap: 40px;
     }
 
     .hero-text h1 {
       font-size: 56px;
       line-height: 1.1;
-      margin-bottom: 20px;
+      margin: 0 0 24px;
     }
 
     .hero-text p {
-      font-size: 17px;
-      color: #555;
+      font-size: 16px;
+      color: #444;
       max-width: 420px;
-      margin-bottom: 30px;
-    }
-
-    .hero-text .cta {
-      display: inline-block;
-      background: #111;
-      color: #fff;
-      padding: 14px 26px;
-      border-radius: 999px;
-      text-decoration: none;
-      font-size: 15px;
+      margin-bottom: 32px;
     }
 
     .hero-visual {
       position: relative;
-      height: 520px;
+      height: 620px;
+      border-radius: 36px;
+      overflow: hidden;
+      background: #f4f4f4;
     }
 
     .hero-visual img.girl {
       position: absolute;
-      right: 0;
-      top: 0;
+      inset: 0;
+      width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 32px;
+      z-index: 1;
     }
 
     .hero-visual img.phone {
       position: absolute;
-      right: 180px;
+      right: 80px;
       bottom: -40px;
-      height: 420px;
-      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.25));
+      height: 480px;
+      z-index: 5;
+      pointer-events: none;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1024px) {
+      header {
+        padding: 20px 24px;
+      }
+
       .hero {
         grid-template-columns: 1fr;
-        padding: 40px 20px;
+        padding: 40px 24px;
       }
 
       .hero-visual {
-        margin-top: 40px;
-        height: 420px;
+        height: 520px;
+      }
+
+      .hero-text h1 {
+        font-size: 40px;
       }
 
       .hero-visual img.phone {
-        right: 60px;
-        height: 320px;
+        right: 40px;
+        height: 420px;
       }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">LookAI</div>
-  <nav>
-    <a href="#how">Как это работает</a>
-    <a href="#for">Для кого</a>
-    <a class="btn" href="/shop.html?shop_id=demo_shop">Попробовать примерку</a>
-  </nav>
-</header>
+  <header>
+    <div class="logo">LookAI</div>
+    <nav>
+      <a href="#">Как это работает</a>
+      <a href="#">Для кого</a>
+      <button class="btn-primary">Попробовать примерку</button>
+    </nav>
+  </header>
 
-<section class="hero">
-  <div class="hero-text">
-    <h1>Примеряйте одежду<br>онлайн,<br>не выходя из дома</h1>
-    <p>
-      Виртуальная примерка одежды с помощью искусственного интеллекта.
-      Загрузите фото — и посмотрите, как вещь сидит именно на вас.
-    </p>
-    <a class="cta" href="/shop.html?shop_id=demo_shop">Попробовать примерку</a>
-  </div>
+  <section class="hero">
+    <div class="hero-text">
+      <h1>
+        Примеряйте одежду онлайн,<br />
+        не выходя из дома
+      </h1>
+      <p>
+        Виртуальная примерка одежды с помощью искусственного интеллекта.
+        Загрузите фото — и посмотрите, как вещь сидит именно на вас.
+      </p>
+      <button class="btn-primary">Попробовать примерку</button>
+    </div>
 
-  <div class="hero-visual">
-    <img src="/images/hero-girl.jpg" alt="Модель" class="girl" />
-    <img src="/images/phone.png" alt="Примерка на телефоне" class="phone" />
-  </div>
-</section>
+    <div class="hero-visual">
+      <img
+        src="/images/hero-girl.jpg"
+        alt=""
+        class="girl"
+      />
+      <img
+        src="/images/phone.png"
+        alt=""
+        class="phone"
+      />
+    </div>
+  </section>
 
 </body>
 </html>
