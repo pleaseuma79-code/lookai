@@ -1,1 +1,46 @@
-public/upload.html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Загрузка товара — LookAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body style="font-family: Arial; padding: 40px">
+
+<h2>Добавить товар</h2>
+
+<form id="form">
+  <input placeholder="shop_id" id="shop_id" required /><br><br>
+  <input placeholder="Название" id="title" required /><br><br>
+  <input placeholder="Image URL" id="image_url" required /><br><br>
+  <input placeholder="Категория" id="category" /><br><br>
+  <button>Отправить</button>
+</form>
+
+<pre id="result"></pre>
+
+<script>
+  document.getElementById('form').onsubmit = async e => {
+    e.preventDefault();
+
+    const body = {
+      shop_id: shop_id.value,
+      title: title.value,
+      image_url: image_url.value,
+      category: category.value
+    };
+
+    const res = await fetch('/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+    document.getElementById('result').textContent =
+      JSON.stringify(data, null, 2);
+  };
+</script>
+
+</body>
+</html>
