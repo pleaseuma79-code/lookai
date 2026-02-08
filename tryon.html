@@ -85,7 +85,8 @@
    <!-- РЕЖИМ ПО ФОТО -->
  <div class="box">
       <h3>2. Выберите товар</h3>
-      <select>
+     <div id="products" style="display:grid;grid-template-columns:repeat(auto-fill,120px);gap:16px;"></div>
+ <select>
         <option>Футболка</option>
         <option>Платье</option>
         <option>Куртка</option>
@@ -133,6 +134,28 @@
   function runTryOn() {
     document.getElementById('resultBox').style.display = 'block';
   }
+</script>
+<script>
+const products = JSON.parse(localStorage.getItem('products') || '[]');
+const container = document.getElementById('products');
+
+products.forEach((p, index) => {
+  const card = document.createElement('div');
+  card.style.cursor = 'pointer';
+  card.innerHTML = `
+    <img src="${p.image}" style="width:100%;border-radius:8px;">
+    <div style="text-align:center;margin-top:6px;font-size:14px;">
+      ${p.name}
+    </div>
+  `;
+
+  card.onclick = () => {
+    localStorage.setItem('selectedProduct', JSON.stringify(p));
+    alert('Товар выбран для примерки');
+  };
+
+  container.appendChild(card);
+});
 </script>
 </body>
 </html>
