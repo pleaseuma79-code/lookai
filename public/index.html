@@ -16,6 +16,9 @@
       color: #111;
     }
 
+    a { text-decoration: none; color: inherit; }
+
+    /* HEADER */
     header {
       max-width: 1200px;
       margin: 0 auto;
@@ -25,21 +28,15 @@
       align-items: center;
     }
 
-    header .logo {
+    .logo {
       font-weight: 700;
       font-size: 20px;
     }
 
-    header nav {
+    nav {
       display: flex;
       gap: 24px;
       align-items: center;
-    }
-
-    header nav a {
-      text-decoration: none;
-      color: #111;
-      font-size: 14px;
     }
 
     .cta {
@@ -47,7 +44,6 @@
       background: #111;
       color: white;
       border-radius: 12px;
-      text-decoration: none;
       font-size: 14px;
     }
 
@@ -74,19 +70,18 @@
       margin-bottom: 32px;
     }
 
-    .hero .btn {
+    .btn {
       padding: 14px 26px;
       background: #111;
       color: white;
       border-radius: 14px;
-      text-decoration: none;
       font-size: 15px;
       display: inline-block;
     }
 
-    .hero-image-wrapper {
+    .hero-image {
       background: #f2f2f2;
-      padding: 30px;
+      padding: 24px;
       border-radius: 32px;
     }
 
@@ -97,19 +92,76 @@
       border-radius: 24px;
     }
 
+    /* SECTIONS */
+    section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 40px;
+    }
+
+    h2 {
+      font-size: 36px;
+      margin-bottom: 48px;
+    }
+
+    /* HOW IT WORKS */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .step {
+      border: 1px solid #eee;
+      border-radius: 20px;
+      padding: 28px;
+    }
+
+    .step-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .step-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .step-text {
+      color: #555;
+      font-size: 15px;
+    }
+
+    /* FOR WHO */
+    .for-who {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    /* DEMO */
+    .demo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .demo img {
+      width: 100%;
+      border-radius: 24px;
+    }
+
     @media (max-width: 900px) {
-      .hero {
+      .hero, .demo {
         grid-template-columns: 1fr;
-        padding: 60px 24px;
       }
 
-      .hero h1 {
-        font-size: 36px;
+      .steps, .for-who {
+        grid-template-columns: 1fr;
       }
 
-      .hero-image img {
-        height: 420px;
-      }
+      h1 { font-size: 36px; }
     }
   </style>
 </head>
@@ -119,29 +171,62 @@
 <header>
   <div class="logo">LookAI</div>
   <nav>
-    <a href="#">Как это работает</a>
-    <a href="#">Для кого</a>
+    <a href="#how">Как это работает</a>
+    <a href="#for">Для кого</a>
     <a class="cta" href="/shop.html?shop_id=demo_shop">Попробовать примерку</a>
   </nav>
 </header>
 
+<!-- HERO -->
 <section class="hero">
   <div>
-    <h1>
-      Примеряйте одежду<br>
-      онлайн,<br>
-      не выходя из дома
-    </h1>
+    <h1>Примеряйте одежду<br>онлайн,<br>не выходя из дома</h1>
     <p>Виртуальная примерка одежды с помощью искусственного интеллекта</p>
     <a class="btn" href="/shop.html?shop_id=demo_shop">Попробовать примерку</a>
   </div>
 
-  <div class="hero-image-wrapper">
-    <div class="hero-image">
-      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1200&auto=format&fit=crop">
+  <div class="hero-image">
+    <!-- ФИКСИРОВАННОЕ ФОТО -->
+    <img src="https://images.unsplash.com/photo-1520975922323-3f9f6a9d1b93?q=80&w=1200&auto=format&fit=crop">
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <h2>Как это работает</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">📷</div>
+      <div class="step-title">Загрузите фото</div>
+      <div class="step-text">Сделайте фото или выберите из галереи</div>
+    </div>
+    <div class="step">
+      <div class="step-icon">👗</div>
+      <div class="step-title">Выберите одежду</div>
+      <div class="step-text">Посмотрите каталог магазина</div>
+    </div>
+    <div class="step">
+      <div class="step-icon">✨</div>
+      <div class="step-title">Примерьте онлайн</div>
+      <div class="step-text">ИИ покажет, как вещь сидит на вас</div>
     </div>
   </div>
 </section>
 
-</body>
-</html>
+<!-- FOR WHO -->
+<section id="for">
+  <h2>Для кого</h2>
+  <div class="for-who">
+    <div class="step">👩‍🦰 Покупатели</div>
+    <div class="step">🛍️ Интернет-магазины</div>
+    <div class="step">📱 Instagram-бренды</div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo">
+  <div>
+    <h2>Примерка прямо с телефона</h2>
+    <p>Без приложений. Просто откройте ссылку и попробуйте.</p>
+  </div>
+  <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?q=80&w=900&
