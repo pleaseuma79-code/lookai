@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Примерка — LookAI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+    input, select {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 16px;
+      font-size: 16px;
+    }
+    button {
+      padding: 16px 24px;
+      font-size: 18px;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .placeholder {
+      width: 100%;
+      height: 400px;
+      background: #ddd;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>Виртуальная примерка</h1>
+
+    <div class="box">
+      <h3>1. Загрузите фото</h3>
+      <input type="file">
+    </div>
+
+    <div class="box">
+      <h3>2. Выберите товар</h3>
+      <select>
+        <option>Футболка</option>
+        <option>Платье</option>
+        <option>Куртка</option>
+      </select>
+    </div>
+
+    <button>Примерить</button>
+
+    <div class="result">
+      <h3>Результат</h3>
+      <div class="placeholder">
+        Здесь будет результат примерки
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
