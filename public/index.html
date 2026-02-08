@@ -2,15 +2,74 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>LookAI</title>
+  <title>LookAI — виртуальная примерка</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
-<script>
-  // редирект на магазин по умолчанию
-  window.location.href = "/shop.html?shop_id=demo_shop";
-</script>
+<header class="header">
+  <div class="logo">LookAI</div>
+  <nav>
+    <a href="#how">Как это работает</a>
+    <a href="#for">Для кого</a>
+    <a class="btn small" href="/shop.html?shop_id=demo_shop">Попробовать примерку</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>Примеряйте одежду онлайн,<br>не выходя из дома</h1>
+    <p>Виртуальная примерка одежды с помощью ИИ</p>
+    <a class="btn" href="/shop.html?shop_id=demo_shop">Попробовать примерку</a>
+  </div>
+
+  <div class="hero-image">
+    <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=800" />
+  </div>
+</section>
+
+<section id="how" class="steps">
+  <h2>Как это работает</h2>
+
+  <div class="steps-grid">
+    <div class="step">
+      <span>1</span>
+      <h3>Выбираете товар</h3>
+      <p>Находите одежду в магазине</p>
+    </div>
+
+    <div class="step">
+      <span>2</span>
+      <h3>Загружаете фото</h3>
+      <p>Или выбираете модель</p>
+    </div>
+
+    <div class="step">
+      <span>3</span>
+      <h3>Получаете примерку</h3>
+      <p>Видите себя в образе</p>
+    </div>
+  </div>
+</section>
+
+<section id="for" class="for">
+  <h2>Для кого</h2>
+
+  <div class="for-grid">
+    <div class="for-item">Интернет-магазины</div>
+    <div class="for-item">Instagram-бренды</div>
+    <div class="for-item">Шоурумы</div>
+  </div>
+
+  <a class="btn center" href="/shop.html?shop_id=demo_shop">
+    Открыть демо-магазин
+  </a>
+</section>
+
+<footer class="footer">
+  © LookAI · Виртуальная примерка
+</footer>
 
 </body>
 </html>
