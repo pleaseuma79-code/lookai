@@ -1,33 +1,21 @@
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
-const multer = require('multer');
-const fs = require('fs');
+const fetch = require('node-fetch');
 
 const app = express();
 app.use(express.json());
 
-// ---------- STATIC ----------
+// ============================
+// STATIC FILES
+// ============================
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ---------- UPLOADS ----------
-const uploadDir = path.join(__dirname, 'public/uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
+const PORT = process.env.PORT || 8080;
 
-const storage = multer.diskStorage({
-  destination: uploadDir,
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const name = `user_${Date.now()}${ext}`;
-    cb(null, name);
-  }
-});
-
-const upload = multer({ storage });
-
-// ---------- DB ----------
+// ============================
+// DATABASE
+// ============================
 const pool = new Pool({
   host: process.env.PGHOST,
   user: process.env.PGUSER,
@@ -37,11 +25,9 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-const PORT = process.env.PORT || 8080;
-
-// ---------- ROUTES ----------
-
-// health
+// ============================
+// HEALTH CHECK
+// ============================
 app.get('/ping', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
@@ -51,17 +37,9 @@ app.get('/ping', async (req, res) => {
   }
 });
 
-// upload user photo
-app.post('/upload', upload.single('photo'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
-
-  const imageUrl = `/uploads/${req.file.filename}`;
-  res.json({ status: 'ok', image_url: imageUrl });
-});
-
-// get products
+// ============================
+// PRODUCTS
+// ============================
 app.get('/products', async (req, res) => {
   const { shop_id } = req.query;
 
@@ -72,7 +50,7 @@ app.get('/products', async (req, res) => {
   try {
     const result = await pool.query(
       `
-      SELECT id, title, image_url, category, shop_id
+      SELECT id, title, image_url, category
       FROM shop_products
       WHERE shop_id = $1
       ORDER BY created_at DESC
@@ -86,31 +64,45 @@ app.get('/products', async (req, res) => {
   }
 });
 
-// add product
-app.post('/products', async (req, res) => {
-  const { shop_id, title, image_url, category } = req.body;
-
-  if (!shop_id || !title || !image_url) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
-
+// ============================
+// GEMINI TEST
+// ============================
+app.get('/ai/test', async (req, res) => {
   try {
-    const result = await pool.query(
-      `
-      INSERT INTO shop_products (shop_id, title, image_url, category)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *
-      `,
-      [shop_id, title, image_url, category || null]
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                { text: 'Привет! Коротко объясни, что такое виртуальная примерка одежды.' }
+              ]
+            }
+          ]
+        })
+      }
     );
 
-    res.json({ status: 'ok', product: result.rows[0] });
+    const data = await response.json();
+
+    res.json({
+      status: 'ok',
+      answer: data.candidates?.[0]?.content?.parts?.[0]?.text || 'Нет ответа'
+    });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ---------- START ----------
+// ============================
+// START SERVER
+// ============================
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
