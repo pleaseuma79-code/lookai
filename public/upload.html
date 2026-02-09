@@ -2,44 +2,128 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Загрузка товара — LookAI</title>
+  <title>LookAI — загрузка фото</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f7f7f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 32px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .upload-box {
+      border: 2px dashed #ccc;
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+
+    .upload-box:hover {
+      border-color: #111;
+    }
+
+    .preview {
+      margin-top: 16px;
+    }
+
+    .preview img {
+      max-width: 100%;
+      border-radius: 12px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      background: #111;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
-<body style="font-family: Arial; padding: 40px">
+<body>
 
-<h2>Добавить товар</h2>
+<div class="container">
+  <h1>Загрузите фото</h1>
+  <p>Сделайте фото в полный рост на нейтральном фоне</p>
 
-<form id="form">
-  <input placeholder="shop_id" id="shop_id" required /><br><br>
-  <input placeholder="Название" id="title" required /><br><br>
-  <input placeholder="Image URL" id="image_url" required /><br><br>
-  <input placeholder="Категория" id="category" /><br><br>
-  <button>Отправить</button>
-</form>
+  <label class="upload-box">
+    Нажмите, чтобы выбрать фото
+    <input type="file" id="fileInput" accept="image/*" />
+  </label>
 
-<pre id="result"></pre>
+  <div class="preview" id="preview"></div>
+
+  <button id="continueBtn" disabled>
+    Продолжить
+  </button>
+</div>
 
 <script>
-  document.getElementById('form').onsubmit = async e => {
-    e.preventDefault();
+  const fileInput = document.getElementById('fileInput');
+  const preview = document.getElementById('preview');
+  const continueBtn = document.getElementById('continueBtn');
 
-    const body = {
-      shop_id: shop_id.value,
-      title: title.value,
-      image_url: image_url.value,
-      category: category.value
+  let imageData = null;
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      imageData = reader.result;
+      preview.innerHTML = `<img src="${imageData}" />`;
+      continueBtn.disabled = false;
+
+      // временно сохраняем фото в localStorage
+      localStorage.setItem('user_image', imageData);
     };
+    reader.readAsDataURL(file);
+  });
 
-    const res = await fetch('/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    const data = await res.json();
-    document.getElementById('result').textContent =
-      JSON.stringify(data, null, 2);
-  };
+  continueBtn.addEventListener('click', () => {
+    window.location.href = '/tryon.html';
+  });
 </script>
 
 </body>
