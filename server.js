@@ -1,5 +1,5 @@
 const express = require('express');
-const fetch = require('node-fetch'); // ВАЖНО
+const fetch = require('node-fetch');
 const { Pool } = require('pg');
 const path = require('path');
 
@@ -38,39 +38,12 @@ app.get('/ping', async (req, res) => {
 });
 
 // ============================
-// PRODUCTS
-// ============================
-app.get('/products', async (req, res) => {
-  const { shop_id } = req.query;
-
-  if (!shop_id) {
-    return res.status(400).json({ error: 'shop_id is required' });
-  }
-
-  try {
-    const result = await pool.query(
-      `
-      SELECT id, title, image_url, category
-      FROM shop_products
-      WHERE shop_id = $1
-      ORDER BY created_at DESC
-      `,
-      [shop_id]
-    );
-
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ============================
-// GEMINI TEST (100% WORKING)
+// GEMINI TEST (АКТУАЛЬНЫЙ)
 // ============================
 app.get('/ai/test', async (req, res) => {
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: {
@@ -79,7 +52,6 @@ app.get('/ai/test', async (req, res) => {
         body: JSON.stringify({
           contents: [
             {
-              role: 'user',
               parts: [
                 {
                   text: 'Explain virtual clothing try-on in one short sentence.'
@@ -95,15 +67,9 @@ app.get('/ai/test', async (req, res) => {
 
     console.log('FULL GEMINI RESPONSE:', JSON.stringify(data, null, 2));
 
-    let answer = 'Нет ответа от Gemini';
-
-    if (data.candidates && data.candidates.length > 0) {
-      const parts = data.candidates[0].content?.parts || [];
-      const texts = parts.map(p => p.text).filter(Boolean);
-      if (texts.length > 0) {
-        answer = texts.join(' ');
-      }
-    }
+    const answer =
+      data.candidates?.[0]?.content?.parts?.[0]?.text
+      || 'Gemini не вернул текст';
 
     res.json({
       status: 'ok',
