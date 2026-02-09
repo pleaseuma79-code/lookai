@@ -1,4 +1,5 @@
 const express = require('express');
+const fetch = require('node-fetch'); // ВАЖНО
 const { Pool } = require('pg');
 const path = require('path');
 
@@ -64,7 +65,7 @@ app.get('/products', async (req, res) => {
 });
 
 // ============================
-// GEMINI TEST (WORKING)
+// GEMINI TEST (100% WORKING)
 // ============================
 app.get('/ai/test', async (req, res) => {
   try {
@@ -72,13 +73,17 @@ app.get('/ai/test', async (req, res) => {
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
           contents: [
             {
               role: 'user',
               parts: [
-                { text: 'Explain virtual clothing try-on in one short sentence.' }
+                {
+                  text: 'Explain virtual clothing try-on in one short sentence.'
+                }
               ]
             }
           ]
@@ -93,11 +98,8 @@ app.get('/ai/test', async (req, res) => {
     let answer = 'Нет ответа от Gemini';
 
     if (data.candidates && data.candidates.length > 0) {
-      const parts = data.candidates[0]?.content?.parts || [];
-      const texts = parts
-        .map(p => p.text)
-        .filter(Boolean);
-
+      const parts = data.candidates[0].content?.parts || [];
+      const texts = parts.map(p => p.text).filter(Boolean);
       if (texts.length > 0) {
         answer = texts.join(' ');
       }
@@ -113,7 +115,6 @@ app.get('/ai/test', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 // ============================
 // START SERVER
