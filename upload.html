@@ -1,35 +1,54 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Загрузка товара — LookAI</title>
+  <meta charset="UTF-8" />
+  <title>LookAI — загрузка фото</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
     body {
-      font-family: Arial, sans-serif;
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
       background: #f5f5f5;
-      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
 
     .box {
       background: white;
-      padding: 24px;
-      max-width: 500px;
-      margin: auto;
-      border-radius: 12px;
+      padding: 32px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      text-align: center;
     }
 
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
+    h1 {
+      margin-bottom: 12px;
+    }
+
+    input {
+      margin: 20px 0;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 12px;
     }
 
     button {
-      background: black;
-      color: white;
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
       border: none;
-      border-radius: 8px;
+      background: #111;
+      color: #fff;
+      font-size: 15px;
       cursor: pointer;
     }
   </style>
@@ -37,51 +56,55 @@
 <body>
 
 <div class="box">
-  <h2>Загрузка товара</h2>
-
-  <input type="text" id="name" placeholder="Название товара">
-  
-  <select id="category">
-    <option value="Платье">Платье</option>
-    <option value="Футболка">Футболка</option>
-    <option value="Куртка">Куртка</option>
-  </select>
-
-  <input type="file" id="image">
-
-  <button onclick="saveProduct()">Сохранить товар</button>
+  <h1>Загрузите фото</h1>
+  <input type="file" id="file" accept="image/*" />
+  <div id="preview"></div>
+  <button id="send">Продолжить</button>
 </div>
 
 <script>
-function saveProduct() {
-  const name = document.getElementById('name').value;
-  const category = document.getElementById('category').value;
-  const imageInput = document.getElementById('image');
+  const fileInput = document.getElementById('file');
+  const preview = document.getElementById('preview');
+  const sendBtn = document.getElementById('send');
 
-  if (!name || !imageInput.files[0]) {
-    alert('Заполните все поля');
-    return;
-  }
+  let file = null;
 
-  const reader = new FileReader();
-  reader.onload = function() {
-    const product = {
-      name,
-      category,
-      image: reader.result
+  fileInput.addEventListener('change', () => {
+    file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      preview.innerHTML = `<img src="${reader.result}">`;
     };
+    reader.readAsDataURL(file);
+  });
 
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    products.push(product);
-    localStorage.setItem('products', JSON.stringify(products));
+  sendBtn.addEventListener('click', async () => {
+    if (!file) {
+      alert('Выберите фото');
+      return;
+    }
 
-    alert('Товар сохранён');
-  };
+    const formData = new FormData();
+    formData.append('photo', file);
 
-  reader.readAsDataURL(imageInput.files[0]);
-}
+    const res = await fetch('/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (!data.image_url) {
+      alert('Ошибка загрузки');
+      return;
+    }
+
+    localStorage.setItem('user_image_url', data.image_url);
+    window.location.href = '/tryon.html';
+  });
 </script>
 
 </body>
 </html>
-
