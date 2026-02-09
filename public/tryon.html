@@ -15,15 +15,16 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      font-size: 24px;
     }
 
     .wrapper {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 24px;
     }
 
     .card {
@@ -31,6 +32,8 @@
       border-radius: 16px;
       padding: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
     }
 
     .card h2 {
@@ -38,13 +41,21 @@
       margin-bottom: 12px;
     }
 
-    img {
+    .card img {
       width: 100%;
       border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .meta {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #555;
     }
 
     .actions {
-      margin-top: 20px;
+      max-width: 1100px;
+      margin: 30px auto 0;
       display: flex;
       gap: 12px;
     }
@@ -70,7 +81,8 @@
     .error {
       text-align: center;
       color: #999;
-      margin-top: 40px;
+      margin-top: 60px;
+      font-size: 16px;
     }
 
     @media (max-width: 768px) {
@@ -86,37 +98,50 @@
 
 <div class="wrapper" id="content"></div>
 
+<div class="actions" id="actions" style="display:none;">
+  <button class="secondary" onclick="goBack()">Назад</button>
+  <button class="primary" onclick="tryOn()">Сгенерировать примерку</button>
+</div>
+
 <script>
   const container = document.getElementById('content');
+  const actions = document.getElementById('actions');
 
-  // фото пользователя
   const userImage = localStorage.getItem('user_image');
+  const productRaw = localStorage.getItem('selected_product');
 
-  if (!userImage) {
+  if (!userImage || !productRaw) {
     container.innerHTML = `
       <div class="error">
-        Фото не найдено.<br />
-        Вернитесь и загрузите фото заново.
+        Данные не найдены.<br>
+        Пожалуйста, начните заново.
       </div>
     `;
   } else {
-    // временный товар (заглушка)
-    const product = {
-      title: 'Платье',
-      image: 'https://picsum.photos/400/600'
-    };
+    const product = JSON.parse(productRaw);
 
     container.innerHTML = `
       <div class="card">
         <h2>Вы</h2>
-        <img src="${userImage}" />
+        <img src="${userImage}" alt="Фото пользователя">
       </div>
 
       <div class="card">
         <h2>${product.title}</h2>
-        <img src="${product.image}" />
+        <img src="${product.image_url}" alt="${product.title}">
+        <div class="meta">${product.category || ''}</div>
       </div>
     `;
+
+    actions.style.display = 'flex';
+  }
+
+  function goBack() {
+    window.location.href = '/shop.html?shop_id=' + (productRaw ? JSON.parse(productRaw).shop_id : '');
+  }
+
+  function tryOn() {
+    alert('Здесь будет AI-примерка 👀');
   }
 </script>
 
