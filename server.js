@@ -79,37 +79,53 @@ app.get('/ai/test', async (req, res) => {
               role: 'user',
               parts: [
                 {
-                  text: 'Объясни простыми словами, что такое виртуальная примерка одежды.'
+                  text: 'What is virtual try-on in simple words?'
                 }
               ]
             }
           ],
           generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 200
-          }
+            temperature: 0.2,
+            maxOutputTokens: 150
+          },
+          safetySettings: [
+            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+            { category: 'HARM_CATEGORY_SEXUAL_CONTENT', threshold: 'BLOCK_NONE' },
+            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
+          ]
         })
       }
     );
 
     const data = await response.json();
 
-    console.log('GEMINI RESPONSE:', JSON.stringify(data, null, 2));
+    console.log('FULL GEMINI RESPONSE:', JSON.stringify(data, null, 2));
 
-    const text =
-      data?.candidates?.[0]?.content?.parts
-        ?.map(p => p.text)
-        ?.join(' ') || null;
+    let text = null;
+
+    if (
+      data.candidates &&
+      data.candidates[0] &&
+      data.candidates[0].content &&
+      data.candidates[0].content.parts
+    ) {
+      text = data.candidates[0].content.parts
+        .map(p => p.text)
+        .join(' ');
+    }
 
     res.json({
       status: 'ok',
-      answer: text || 'Gemini ответил, но без текста'
+      answer: text || 'Gemini вернул пустой ответ'
     });
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // ============================
 // START SERVER
