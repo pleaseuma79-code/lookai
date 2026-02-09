@@ -69,7 +69,7 @@ app.get('/products', async (req, res) => {
 app.get('/ai/test', async (req, res) => {
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -78,21 +78,9 @@ app.get('/ai/test', async (req, res) => {
             {
               role: 'user',
               parts: [
-                {
-                  text: 'What is virtual try-on in simple words?'
-                }
+                { text: 'Explain virtual clothing try-on in one short sentence.' }
               ]
             }
-          ],
-          generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 150
-          },
-          safetySettings: [
-            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-            { category: 'HARM_CATEGORY_SEXUAL_CONTENT', threshold: 'BLOCK_NONE' },
-            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' }
           ]
         })
       }
@@ -102,27 +90,27 @@ app.get('/ai/test', async (req, res) => {
 
     console.log('FULL GEMINI RESPONSE:', JSON.stringify(data, null, 2));
 
-    let text = null;
+    let answer = 'Нет ответа от Gemini';
 
-    if (
-      data.candidates &&
-      data.candidates[0] &&
-      data.candidates[0].content &&
-      data.candidates[0].content.parts
-    ) {
-      text = data.candidates[0].content.parts
+    if (data.candidates && data.candidates.length > 0) {
+      const parts = data.candidates[0]?.content?.parts || [];
+      const texts = parts
         .map(p => p.text)
-        .join(' ');
+        .filter(Boolean);
+
+      if (texts.length > 0) {
+        answer = texts.join(' ');
+      }
     }
 
     res.json({
       status: 'ok',
-      answer: text || 'Gemini вернул пустой ответ'
+      answer
     });
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    console.error('Gemini error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
