@@ -1,16 +1,33 @@
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 
 const app = express();
 app.use(express.json());
 
-// 👉 Раздача HTML из папки public
+// ---------- STATIC ----------
 app.use(express.static(path.join(__dirname, 'public')));
 
-const PORT = process.env.PORT || 8080;
+// ---------- UPLOADS ----------
+const uploadDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
-// 👉 Подключение к Postgres
+const storage = multer.diskStorage({
+  destination: uploadDir,
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const name = `user_${Date.now()}${ext}`;
+    cb(null, name);
+  }
+});
+
+const upload = multer({ storage });
+
+// ---------- DB ----------
 const pool = new Pool({
   host: process.env.PGHOST,
   user: process.env.PGUSER,
@@ -20,9 +37,11 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// --------------------
-// HEALTH CHECK
-// --------------------
+const PORT = process.env.PORT || 8080;
+
+// ---------- ROUTES ----------
+
+// health
 app.get('/ping', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
@@ -32,9 +51,17 @@ app.get('/ping', async (req, res) => {
   }
 });
 
-// --------------------
-// GET PRODUCTS BY SHOP
-// --------------------
+// upload user photo
+app.post('/upload', upload.single('photo'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  const imageUrl = `/uploads/${req.file.filename}`;
+  res.json({ status: 'ok', image_url: imageUrl });
+});
+
+// get products
 app.get('/products', async (req, res) => {
   const { shop_id } = req.query;
 
@@ -45,7 +72,7 @@ app.get('/products', async (req, res) => {
   try {
     const result = await pool.query(
       `
-      SELECT id, title, image_url, category
+      SELECT id, title, image_url, category, shop_id
       FROM shop_products
       WHERE shop_id = $1
       ORDER BY created_at DESC
@@ -59,9 +86,7 @@ app.get('/products', async (req, res) => {
   }
 });
 
-// --------------------
-// ADD PRODUCT
-// --------------------
+// add product
 app.post('/products', async (req, res) => {
   const { shop_id, title, image_url, category } = req.body;
 
@@ -85,9 +110,7 @@ app.post('/products', async (req, res) => {
   }
 });
 
-// --------------------
-// START SERVER
-// --------------------
+// ---------- START ----------
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
