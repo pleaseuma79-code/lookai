@@ -2,10 +2,6 @@ const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 
-// ⬇️ ВАЖНО: node-fetch через dynamic import
-const fetch = (...args) =>
-  import('node-fetch').then(({ default: fetch }) => fetch(...args));
-
 const app = express();
 app.use(express.json());
 
@@ -68,41 +64,46 @@ app.get('/products', async (req, res) => {
 });
 
 // ============================
-// GEMINI TEST
+// GEMINI TEST (WORKING)
 // ============================
 app.get('/ai/test', async (req, res) => {
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [
             {
               role: 'user',
               parts: [
                 {
-                  text: 'Коротко объясни, что такое виртуальная примерка одежды.'
+                  text: 'Объясни простыми словами, что такое виртуальная примерка одежды.'
                 }
               ]
             }
-          ]
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 200
+          }
         })
       }
     );
 
     const data = await response.json();
 
-    console.log('GEMINI RAW RESPONSE:', JSON.stringify(data, null, 2));
+    console.log('GEMINI RESPONSE:', JSON.stringify(data, null, 2));
+
+    const text =
+      data?.candidates?.[0]?.content?.parts
+        ?.map(p => p.text)
+        ?.join(' ') || null;
 
     res.json({
       status: 'ok',
-      answer:
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        'Gemini не вернул текст'
+      answer: text || 'Gemini ответил, но без текста'
     });
 
   } catch (err) {
