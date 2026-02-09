@@ -2,6 +2,9 @@ const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 
+// ⬇️ ВАЖНО: node-fetch через dynamic import
+const fetch = (...args) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const app = express();
 app.use(express.json());
@@ -80,7 +83,9 @@ app.get('/ai/test', async (req, res) => {
           contents: [
             {
               parts: [
-                { text: 'Привет! Коротко объясни, что такое виртуальная примерка одежды.' }
+                {
+                  text: 'Привет! Коротко объясни, что такое виртуальная примерка одежды.'
+                }
               ]
             }
           ]
@@ -92,9 +97,10 @@ app.get('/ai/test', async (req, res) => {
 
     res.json({
       status: 'ok',
-      answer: data.candidates?.[0]?.content?.parts?.[0]?.text || 'Нет ответа'
+      answer:
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        'Нет ответа от Gemini'
     });
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
